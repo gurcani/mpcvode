@@ -1,6 +1,6 @@
 from mpi4py import MPI
 import numpy as np
-from pcvodeg import pcvodeg
+from mpcvode import mpcvode
 import matplotlib.pylab as plt
 
 def splitmpi(shape,rank,size,axis=-1,Nsp=0):
@@ -40,17 +40,17 @@ dphidt=distarray((4,4),dtype=complex,comm=MPI.COMM_WORLD)
 gam=0.1
 phi[:,:]=[ [i+j for j in np.r_[phi.local_slice[1]] ] 
           for i in np.r_[phi.local_slice[0]] ]
-
+phi0=phi.copy()
 def fntest(t,y,dydt):
     dydt[:,:] = gam*y[:,:]
 
-pcv=pcvodeg(fntest,phi,dphidt,0.0,100.0,atol=1e-12,rtol=1e-8)
+mpcv=mpcvode(fntest,phi,dphidt,0.0,100.0,atol=1e-12,rtol=1e-8)
 t=np.arange(10.0)
 z=np.zeros(10,dtype=complex)
 z[0]=phi[0,0]
 for l in range(1,t.shape[0]):
-    pcv.integrate_to(t[l])
-    z[l]=pcv.y[0,0]
+    mpcv.integrate_to(t[l])
+    z[l]=mpcv.y[0,0]
 plt.plot(t,z.real,'x',t,z[0].real*np.exp(0.1*t),'--')
 plt.legend(['numerical solution',str(z[0].real)+'*exp(0.1*t)'])
 plt.show()
