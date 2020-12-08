@@ -1,12 +1,10 @@
 #include <stdlib.h>
-#include <stdio.h>
-#include <cvode/cvode.h>                          /* prototypes for CVODE fcts., consts.          */
-#include <nvector/nvector_parallel.h>             /* access to MPI-parallel N_Vector              */
-#include <sunnonlinsol/sunnonlinsol_fixedpoint.h> /* access to the fixed point SUNNonlinearSolver */
-#include <sundials/sundials_types.h>              /* definition of type realtype                  */
-#include <mpi.h> /* MPI constants and types */
+#include <cvode/cvode.h>
+#include <nvector/nvector_parallel.h>
+#include <sunnonlinsol/sunnonlinsol_fixedpoint.h>
+#include <sundials/sundials_types.h>
+#include <mpi.h>
 #include "mpcvode.h"
-//#include <omp.h>
 
 mpcv_pars *p_glob;
 
@@ -16,7 +14,9 @@ static int fnmpcvode(realtype t, N_Vector y, N_Vector dydt, void *fdata){
   return 0;
 }
 
-void init_solver(int N,int Nloc, double *y, double *dydt, double t0, void (*fnpy)(double,double *,double *), double atol, double rtol, int mxsteps){
+void init_solver(int N,int Nloc, double *y, double *dydt,
+		 double t0, void (*fnpy)(double,double *,double *),
+		 double atol, double rtol, int mxsteps){
   SUNNonlinearSolver NLS;
   int state;
   mpcv_pars *p;
